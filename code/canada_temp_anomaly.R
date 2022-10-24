@@ -35,9 +35,7 @@ t_data <- as.data.table(t_anamoly.array) %>%
          year = year(time)) %>% 
   group_by(year, longitude, latitude) %>%
   summarize(t_diff = mean(t_diff), .groups = "drop") %>% 
-  filter(between(year, 1950, 2021),
-         between(latitude, 42, 83),
-         between(longitude, -141, -53)) %>% 
+  filter(between(year, 1950, 2021)) %>% 
   mutate(decade = floor(year/10)*10,
          single = year %% 10)
 
@@ -47,19 +45,17 @@ t_data %>%
   mutate(t_diff = case_when(t_diff < -4 ~ -4,
                             t_diff > 4 ~ 4,
                             TRUE ~ t_diff)) %>% 
-  # filter(year == 2000) %>% 
   ggplot(aes(x = longitude, y = latitude, fill = t_diff)) +
   geom_raster() +
   scale_fill_gradient2(name = "Temperature<br>anomaly (°C)",
                        low = "darkblue", mid = "white", high = "darkred",
                        midpoint = 0,
-                       limits = c(-4.2, 4.2),
-                       breaks = c(-4, -2, 0, 2, 4)) +
+                       breaks = c(-4, -2, 0, 2, 4),
+                       labels = c("≥ -4", "-2", "0", "2", "≥ 4")) +
   coord_fixed(expand = FALSE) +
   facet_grid(single ~ decade, switch = "y") +
-  labs(title = "Canada annual temperature anomalies between 1950 and 2021",
-       subtitle = "Deviations from the corresponding 1951-1980 means",
-       caption = "Data: https://data.giss.nasa.gov/gistemp/",
+  labs(title = "Global annual temperature anomalies between 1950 and 2021",
+       caption = "Temperature anomalies data collected from GISTEMP v4",
        x = NULL,
        y = NULL) +
   theme(axis.text = element_blank(),
@@ -81,7 +77,7 @@ t_data %>%
   guides(fill = guide_colorbar(title.position = "top",
                                barwidth = unit(0.8, "lines")))
          
-ggsave("figure/canada_temp_anomaly.png", width = 8, height = 6)
+ggsave("figure/global_temp_anomaly.png", width = 8, height = 6)
 
 nc_close(nc_data)
 unlink("gistemp250_GHCNv4.nc")

@@ -9,6 +9,7 @@ download.file(url, destfile = "gistemp250_GHCNv4.nc.gz")
 gunzip("gistemp250_GHCNv4.nc.gz")
 
 nc_data <- nc_open("gistemp250_GHCNv4.nc")
+
 # Save the print(nc) dump to a text file
 {
   sink("gistemp250_GHCNv4.txt")
@@ -17,7 +18,7 @@ nc_data <- nc_open("gistemp250_GHCNv4.nc")
 }
 
 lon <- ncvar_get(nc_data, "lon")
-lat <- ncvar_get(nc_data, "lat", verbose = F)
+lat <- ncvar_get(nc_data, "lat")
 t <- ncvar_get(nc_data, "time")
 
 t_anamoly.array <- ncvar_get(nc_data, "tempanomaly") # store the data in a 3-dimensional array
